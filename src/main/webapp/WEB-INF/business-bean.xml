@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<context:property-placeholder location="classpath:config/jdbc.properties" />
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${JDBC.driver}" />
+		<property name="url" value="${JDBC.url}" />
+		<property name="username" value="${JDBC.username}" />
+		<property name="password" value="${JDBC.password}" />
+	</bean>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:config/SqlMapConfig.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="*"></context:component-scan>
+	
+
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+</beans>

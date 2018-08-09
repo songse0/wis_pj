@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="memberMapper">
+	<!-- RESULTMAP : selectMemberRM -->
+	<resultMap type="member" id="selectMemberRM">
+		<result property="email" column="email" />
+		<result property="nickname" column="nickname" />
+		<result property="username" column="username" />
+		<result property="password" column="password" />
+		<result property="address" column="address" />
+		<result property="memberPictureUrl" column="member_picture_url" />
+	</resultMap>
+
+	<!-- SELECT : isEmailExist -->
+	<select id="isEmailExist" parameterType="string" resultType="int">
+		SELECT COUNT(-1)
+		FROM member
+		WHERE email=#{value}
+	</select>
+
+	<!-- SELECT : isNicknameExist -->
+	<select id="isNicknameExist" parameterType="string" resultType="int">
+		SELECT COUNT(-1)
+		FROM member
+		WHERE nickname=#{value}
+	</select>
+
+	<!-- INSERT : registerMember -->
+	<insert id="registerMember" parameterType="member">
+		INSERT INTO member
+		(email, nickname, username, password, address, member_picture_url)
+		values(#{email}, #{nickname}, #{username}, #{password}, #{address},
+		#{memberPictureUrl})
+	</insert>
+
+	<!-- SELECT : checkPassword -->
+	<select id="checkPassword" parameterType="member" resultType="int">
+		SELECT COUNT(-1)
+		FROM member
+		WHERE password=#{password} AND
+		email=#{email}
+	</select>
+
+	<!-- DELETE : removeMember -->
+	<delete id="removeMember" parameterType="string">
+		delete from member where
+		email=#{value}
+	</delete>
+
+	<!-- SELECT : login -->
+	<select id="login" parameterType="member" resultMap="selectMemberRM">
+		select
+		email, nickname, username, password, address, member_picture_url
+		from member
+		where email= #{email} AND password= #{password}
+	</select>
+
+	<!-- SELECT : showMemberInfo -->
+	<select id="showMemberInfo" parameterType="string" resultMap="selectMemberRM">
+		select email, nickname, username, password, address,
+		member_picture_url
+		from member
+		where email=#{value}
+	</select>
+
+	<!-- UPDATE : updateMember -->
+	<update id="updateMember" parameterType="member">
+		update member
+		set nickname=#{nickname},username=#{username},
+		password=#{password},address=#{address},member_picture_url=#{memberPictureUrl}
+		where email=#{email}
+	</update>
+
+	<!-- Email 찾기 -->
+	<select id="findEmail" parameterType="hashMap" resultType="string">
+		SELECT email FROM member
+		WHERE username=#{username} AND
+		nickname=#{nickname}
+	</select>
+
+	<!-- PASSWORD 찾기 -->
+	<select id="findPassword" parameterType="hashMap" resultType="string">
+		SELECT password FROM member
+		WHERE email=#{email} AND
+		username=#{username} AND nickname=#{nickname}
+	</select>
+	
+	<update id="deletePictureUrl" parameterType="int">
+		UPDATE member
+		SET
+		member_picture_url=null
+		WHERE email = #{value}
+	</update>
+</mapper>
+
